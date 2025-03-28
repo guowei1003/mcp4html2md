@@ -134,3 +134,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+.cursor/
+.pytest_cache/
+.images/
+__pycache__/

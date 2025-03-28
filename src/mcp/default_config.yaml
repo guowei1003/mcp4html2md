@@ -1,0 +1,43 @@
+# MCP Default Configuration
+
+fetcher:
+  headless: true
+  timeout: 30
+  user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+
+parser:
+  rules_path: ~/.mcp/rules
+  default_format: markdown
+  default_rules:
+    title: 'h1'
+    content: 'article'
+    author: '.author'
+    date: '.date'
+    tags: '.tags'
+
+converter:
+  template_path: ~/.mcp/templates
+  default_template: default.md
+  image_path: images
+  link_style: relative
+
+output:
+  path: ~/Documents/mcp-output
+  filename_template: '{title}-{date}'
+  create_date_dirs: true
+  file_exists_action: increment  # increment, overwrite, or skip
+
+plugins:
+  enabled: []
+  image_downloader:
+    download_path: images
+    skip_data_urls: true
+    timeout: 30
+    max_retries: 3
+
+logging:
+  console_level: INFO
+  file_level: DEBUG
+  log_dir: ~/.mcp/logs
+  max_file_size: 10MB
+  backup_count: 5 

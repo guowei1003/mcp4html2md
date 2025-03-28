@@ -1,0 +1,205 @@
+# MCP Tool Code Generation Specification
+
+## 1. 项目概述
+开发一个基于Python的网页内容转换工具(Markdown Content Processor)，通过Playwright实现：
+- 智能网页内容抓取
+- 结构化数据提取
+- 多模板Markdown生成
+- 符合MCP（Model Context Protocol） 协议,可用于MCP调用
+
+## 2. 核心功能需求
+
+### 2.1 网页获取模块
+```python
+class PageFetcher:
+    def __init__(self, headless=True):
+        """
+        初始化浏览器实例
+        :param headless: 是否启用无头模式
+        """
+    
+    async def fetch(self, url: str) -> Tuple[str, str]:
+        """
+        获取网页完整内容
+        返回值: (HTML内容, 最终URL)
+        """
+
+### 2.2 内容解析引擎
+```python
+class ContentParser:
+    def __init__(self, custom_rules: dict = None):
+        """
+        :param custom_rules: 平台特定解析规则
+        """
+    
+    def parse(self, html: str, url: str) -> dict:
+        """
+        返回结构化数据:
+        {
+            'title': '',
+            'author': '',
+            'content': [],
+            'metadata': {}
+        }
+        """
+
+### 2.3 规则配置系统
+```python
+# 预设规则示例
+PLATFORM_RULES = {
+    'github.com': {
+        'title': '//h1/strong/a',
+        'content': [
+            ('xpath', '//article', 'markdown'),
+            ('css', '.repository-content', 'clean_html')
+        ]
+    },
+    'zhihu.com': {
+        'title': 'h1.QuestionHeader-title',
+        'author': '.AuthorInfo-name',
+        'content': [
+            ('selector', '.QuestionAnswer-content', 'text_blocks')
+        ]
+    }
+}
+```
+
+## 3. 技术实现规范
+
+### 3.1 依赖组件
+
+- Playwright >= 1.40
+- BeautifulSoup4
+- markdownify
+- lxml
+
+
+3.2 核心处理流程
+
+```python
+async def process_url(url: str) -> str:
+    fetcher = PageFetcher()
+    html, final_url = await fetcher.fetch(url)
+    
+    parser = ContentParser(rules=load_rules(final_url))
+    structured_data = parser.parse(html, final_url)
+    
+    converter = MarkdownConverter()
+    return converter.convert(structured_data)
+```
+
+### 4. 特殊平台处理要求
+
+#### 4.1 GitHub规范
+
+仓库页面必须提取：
+- README.md完整内容
+- Star/Fork数
+- 主要编程语言
+- 最近更新时间
+
+#### 4.2 知乎规范
+
+回答内容需包含：
+- 作者认证信息
+- 赞同数
+- 内容层次结构保留
+- 评论区摘要
+
+#### 5. Markdown生成标准
+
+##### 5.1 通用模板结构
+
+```markdown
+# {标题}
+
+> 来源: [{域名}](原文链接)
+> 抓取时间: {时间}
+
+{元数据表格}
+
+---
+
+{正文内容}
+
+---
+
+> 自动化生成内容，完整版权归原作者所有
+```
+
+#### 5.2 内容转换规则
+
+- 标题级别自动降级（h1->h2）
+- 代码块保留原始缩进
+- 表格转换为Markdown格式
+- 图片自动添加备用文字
+
+#### 6. 异常处理机制
+
+##### 6.1 错误分类
+
+| 错误类型 | 处理方式 |
+| -------- | -------- |
+| 网络错误(4xx/5xx) | 重试机制+最终错误标记 |
+| 内容解析失败 | 回退到通用解析模式 |
+| 规则不存在 | 执行默认内容提取策略 |
+
+
+#### 7. 代码质量要求
+
+- 类型注解覆盖率100%
+- 符合PEP8规范
+- 关键函数文档完整
+- 单元测试覆盖率≥80%
+
+#### 8. 扩展性设计
+
+##### 8.1 规则热加载
+
+支持通过YAML文件动态添加新规则：
+
+```yaml
+platform: medium.com
+rules:
+  title:
+    selector: h1
+    type: text
+  content:
+    - selector: .article-body
+      type: clean_html
+```
+
+##### 8.2 插件机制
+
+预留内容后处理hook：
+
+```python
+def content_postprocessor(content: str) -> str:
+    # 实现自定义处理逻辑
+```
+
+### 9. 测试用例要求
+
+#### 9.1 单元测试覆盖
+
+- 不同网站解析器验证
+- Markdown转换完整性检查
+- 异常流程测试
+
+#### 9.2 示例测试集
+
+```python
+TEST_CASES = [
+    ('https://github.com/user/repo', '检查README提取'),
+    ('https://zhihu.com/question/123', '验证作者信息'),
+    ('https://unknown-site.com', '通用规则测试')
+]
+```
+
+### 10. 交付成果物
+
+- 核心处理模块代码
+- 预设规则配置文件
+- 单元测试套件
+- 示例使用文档
+- Docker化部署方案

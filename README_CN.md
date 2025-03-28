@@ -1,53 +1,53 @@
-# MCP (Markdown Content Processor)
+# MCP (Markdown 内容处理器)
 
-A powerful web content scraping and processing tool that converts web pages to well-formatted Markdown documents.
+一个强大的网页内容抓取和处理工具，可以将网页转换为格式良好的 Markdown 文档。
 
-## Features
+## 特性
 
-- **Smart Web Scraping**: Uses Playwright for reliable content extraction, even from JavaScript-heavy websites
-- **Intelligent Content Parsing**: Automatically identifies and extracts main content from web pages
-- **Markdown Conversion**: Converts HTML content to clean, well-formatted Markdown
-- **Plugin System**: Extensible architecture supporting custom content processing plugins
-- **Image Processing**: Automatically downloads and manages images with local references
-- **Configurable**: Supports custom templates and configuration options
-- **Command Line Interface**: Easy to use CLI for quick content processing
+- **智能网页抓取**：使用 Playwright 进行可靠的内容提取，即使是重度依赖 JavaScript 的网站
+- **智能内容解析**：自动识别和提取网页的主要内容
+- **Markdown 转换**：将 HTML 内容转换为清晰、格式良好的 Markdown
+- **插件系统**：可扩展的架构，支持自定义内容处理插件
+- **图片处理**：自动下载图片并管理本地引用
+- **可配置**：支持自定义模板和配置选项
+- **命令行界面**：易于使用的 CLI，快速处理内容
 
-## Installation
+## 安装
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/mcp4html2md.git
+# 克隆仓库
+git clone https://github.com/guowei1003/mcp4html2md.git
 cd mcp4html2md
 
-# Install the package
+# 安装包
 pip install -e .
 
-# Install Playwright browsers (required)
+# 安装 Playwright 浏览器（必需）
 playwright install
 ```
 
-## Quick Start
+## 快速开始
 
-Basic usage:
+基本用法：
 ```bash
-# Convert a webpage to Markdown
+# 将网页转换为 Markdown
 mcp https://example.com
 
-# Specify output file
+# 指定输出文件
 mcp https://example.com -o output.md
 
-# Use image processing plugin
+# 使用图片处理插件
 mcp https://example.com --plugins image_downloader
 
-# List available plugins
+# 列出可用插件
 mcp --list-plugins
 ```
 
-## Configuration
+## 配置
 
-MCP uses YAML configuration files. The default configuration is included in the package at `src/mcp/default_config.yaml`. On first run, this configuration will be automatically copied to `~/.mcp/config.yaml`.
+MCP 使用 YAML 格式的配置文件。默认配置文件包含在包中的 `src/mcp/default_config.yaml`。首次运行时，该配置将自动复制到 `~/.mcp/config.yaml`。
 
-### Default Configuration
+### 默认配置
 
 ```yaml
 fetcher:
@@ -75,7 +75,7 @@ output:
   path: ~/Documents/mcp-output
   filename_template: '{title}-{date}'
   create_date_dirs: true
-  file_exists_action: increment  # increment, overwrite, or skip
+  file_exists_action: increment  # increment（递增）, overwrite（覆盖）, 或 skip（跳过）
 
 plugins:
   enabled: []
@@ -93,77 +93,77 @@ logging:
   backup_count: 5
 ```
 
-### Customizing Configuration
+### 自定义配置
 
-You can customize the configuration in two ways:
+您可以通过两种方式自定义配置：
 
-1. **Global Configuration**:
-   - Edit `~/.mcp/config.yaml`
-   - Changes will apply to all future conversions
+1. **全局配置**：
+   - 编辑 `~/.mcp/config.yaml`
+   - 更改将应用于所有后续的转换
    ```bash
-   # Open config in your default editor
+   # 用默认编辑器打开配置文件
    nano ~/.mcp/config.yaml
    ```
 
-2. **Project-specific Configuration**:
-   - Create a `mcp_config.yaml` in your project directory
-   - This will override the global configuration for this project
+2. **项目特定配置**：
+   - 在项目目录中创建 `mcp_config.yaml`
+   - 这将覆盖此项目的全局配置
    ```bash
-   # Copy default config to current directory
+   # 将默认配置复制到当前目录
    cp ~/.mcp/config.yaml ./mcp_config.yaml
    ```
 
-### Configuration Options
+### 配置选项说明
 
-- **fetcher**: Controls web page fetching
-  - `headless`: Run browser in headless mode
-  - `timeout`: Page load timeout in seconds
-  - `user_agent`: Browser user agent string
+- **fetcher**: 控制网页获取
+  - `headless`: 是否使用无头浏览器模式
+  - `timeout`: 页面加载超时时间（秒）
+  - `user_agent`: 浏览器用户代理字符串
 
-- **parser**: Content parsing settings
-  - `rules_path`: Directory for custom parsing rules
-  - `default_format`: Output format (markdown/html)
-  - `default_rules`: CSS selectors for content extraction
+- **parser**: 内容解析设置
+  - `rules_path`: 自定义解析规则目录
+  - `default_format`: 输出格式（markdown/html）
+  - `default_rules`: 内容提取的 CSS 选择器
 
-- **converter**: Markdown conversion settings
-  - `template_path`: Directory for custom templates
-  - `default_template`: Default template file
-  - `image_path`: Local path for downloaded images
-  - `link_style`: URL style in output (relative/absolute)
+- **converter**: Markdown 转换设置
+  - `template_path`: 自定义模板目录
+  - `default_template`: 默认模板文件
+  - `image_path`: 下载图片的本地路径
+  - `link_style`: 输出中的 URL 样式（相对/绝对）
 
-- **output**: Output file settings
-  - `path`: Default output directory
-  - `filename_template`: Template for output filenames
-  - `create_date_dirs`: Create date-based directories
-  - `file_exists_action`: Action when file exists
+- **output**: 输出文件设置
+  - `path`: 默认输出目录
+  - `filename_template`: 输出文件名模板
+  - `create_date_dirs`: 是否创建日期目录
+  - `file_exists_action`: 文件已存在时的处理方式
 
-- **plugins**: Plugin settings
-  - `enabled`: List of enabled plugins
-  - Plugin-specific configurations
+- **plugins**: 插件设置
+  - `enabled`: 启用的插件列表
+  - 各插件的具体配置
 
-- **logging**: Logging settings
-  - `console_level`: Console output level
-  - `file_level`: File logging level
-  - `log_dir`: Log file directory
-  - `max_file_size`: Maximum log file size
-  - `backup_count`: Number of backup log files
+- **logging**: 日志设置
+  - `console_level`: 控制台输出级别
+  - `file_level`: 文件日志级别
+  - `log_dir`: 日志文件目录
+  - `max_file_size`: 最大日志文件大小
+  - `backup_count`: 备份日志文件数量
 
-## Plugin System
+## 插件系统
 
-MCP supports a plugin system for custom content processing. Available plugins:
+MCP 支持自定义内容处理的插件系统。可用插件：
 
-- **Image Downloader**: Downloads images to local storage and updates references
+- **图片下载器**：将图片下载到本地存储并更新引用
   ```bash
   mcp https://example.com --plugins image_downloader
   ```
 
-### Creating Custom Plugins
+### 创建自定义插件
 
-1. Create a new Python file in the plugins directory
-2. Inherit from the `Plugin` base class
-3. Implement the `process_content` method
+1. 在插件目录中创建新的 Python 文件
+2. 继承 `Plugin` 基类
+3. 实现 `process_content` 方法
 
-Example:
+示例：
 ```python
 from mcp.plugin import Plugin
 
@@ -172,31 +172,31 @@ class CustomPlugin(Plugin):
         super().__init__(name, description)
     
     def process_content(self, content: dict) -> dict:
-        # Process content here
+        # 在这里处理内容
         return content
 ```
 
-## Logging
+## 日志系统
 
-MCP includes a comprehensive logging system:
-- Console output: INFO level and above
-- File logging: DEBUG level and above
-- Log files location: `~/.mcp/logs/`
+MCP 包含一个完整的日志系统：
+- 控制台输出：INFO 级别及以上
+- 文件日志：DEBUG 级别及以上
+- 日志文件位置：`~/.mcp/logs/`
 
-## Development
+## 开发
 
 ```bash
-# Install development dependencies
+# 安装开发依赖
 pip install -e ".[dev]"
 
-# Run tests
+# 运行测试
 pytest
 
-# Run specific test file
+# 运行特定测试文件
 pytest tests/test_logger.py
 ```
 
-Output:
+结果输出：
 ```bash
 (base)  ✘ /workflow-script/mcp4html2md   main ±  pytest -v
 ========================================================= test session starts ==========================================================
@@ -261,14 +261,14 @@ tests/test_plugin.py::test_invalid_plugin PASSED                                
 
 ==================================================== 50 passed, 1 warning in 0.58s =====================================================
 ```
-## Contributing
+## 贡献
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Fork 仓库
+2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m '添加一些很棒的特性'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 开启一个 Pull Request
 
-## License
+## 许可证
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+本项目基于 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情 
