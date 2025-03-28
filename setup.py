@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="mcp",
+    name="html2md",
     version="0.1.0",
-    description="Markdown Content Processor - 网页内容转Markdown工具",
-    author="Your Name",
-    author_email="your.email@example.com",
+    description="HTML to Markdown Converter",
+    author="Divid",
+    author_email="guowei1264@163.com",
     packages=find_packages("src"),
     package_dir={"": "src"},
     install_requires=[
@@ -19,7 +19,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "mcp=mcp.cli:main",
+            "html2md=mcp.cli:main",
         ],
     },
     python_requires=">=3.8",
