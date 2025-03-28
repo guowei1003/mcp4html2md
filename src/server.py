@@ -1,14 +1,14 @@
 import os
-import tempfile
-import subprocess
 import asyncio
-from typing import Optional
+import tempfile
+from typing import Optional, List
 from mcp.server.fastmcp import FastMCP
+from convert import PageFetcher, ContentParser, MarkdownConverter, PluginManager
 
 mcp = FastMCP("html-convert-md")
 
 async def _convert_html_to_markdown(input_content: str, is_url: bool = False, include_images: bool = True) -> str:
-    """使用 htmlcmd 命令行工具转换内容
+    """使用项目中的功能直接转换HTML/URL为Markdown
     
     Args:
         input_content: 输入内容（URL或HTML内容）
@@ -18,57 +18,46 @@ async def _convert_html_to_markdown(input_content: str, is_url: bool = False, in
     Returns:
         转换后的Markdown文本
     """
-    temp_files = []
-    
     try:
-        # 如果是HTML内容，先创建临时文件
-        if not is_url:
-            html_file = tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False)
-            html_file.write(input_content)
-            html_file.close()
-            temp_files.append(html_file.name)
-            input_content = html_file.name
-
-        # 创建临时输出文件
-        output_file = tempfile.NamedTemporaryFile(suffix='.md', delete=False)
-        output_file.close()
-        temp_files.append(output_file.name)
-
-        # 构建命令
-        cmd = ['htmlcmd']
-        if not include_images:
-            cmd.extend(['--no-images'])
-        cmd.extend(['-o', output_file.name, input_content])
-
-        # 运行命令
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
+        content = None
+        plugin_list = ["image_downloader"] if include_images else []
+        plugin_manager = PluginManager()
         
-        stdout, stderr = await process.communicate()
+        # 处理URL
+        if is_url:
+            if not PageFetcher.is_valid_url(input_content):
+                return f"转换失败: 无效的URL: {input_content}"
+                
+            async with PageFetcher(headless=True) as fetcher:
+                html, final_url = await fetcher.fetch(input_content)
+                
+            parser = ContentParser()
+            content = parser.parse(html, final_url)
+            
+        # 处理HTML内容
+        else:
+            # 创建临时文件作为伪URL
+            html = input_content
+            pseudo_url = "https://html2md.local/content"
+            
+            parser = ContentParser()
+            content = parser.parse(html, pseudo_url)
         
-        if process.returncode != 0:
-            error_msg = stderr.decode() if stderr else "未知错误"
-            return f"转换失败: {error_msg}"
-
-        # 读取输出文件
-        with open(output_file.name, 'r', encoding='utf-8') as f:
-            result = f.read()
-
-        return result
+        # 应用插件处理
+        if plugin_list:
+            for plugin_name in plugin_list:
+                plugin = plugin_manager.get_plugin(plugin_name)
+                if plugin:
+                    content = await plugin.process_content(content)
+        
+        # 转换为Markdown
+        converter = MarkdownConverter()
+        markdown = converter.convert(content)
+        
+        return markdown
 
     except Exception as e:
         return f"转换失败: {str(e)}"
-    finally:
-        # 清理临时文件
-        for file_path in temp_files:
-            try:
-                if os.path.exists(file_path):
-                    os.unlink(file_path)
-            except:
-                pass
 
 @mcp.tool()
 async def url_to_markdown(url: str, include_images: Optional[bool] = True) -> str:
