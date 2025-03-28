@@ -12,6 +12,8 @@ from .markdown_converter import MarkdownConverter
 from .config import Config
 from .plugin import PluginManager
 
+__version__ = '1.0.0'
+
 class CLI:
     def __init__(self):
         """初始化CLI"""
@@ -21,11 +23,29 @@ class CLI:
     def create_parser(self) -> argparse.ArgumentParser:
         """创建命令行参数解析器"""
         parser = argparse.ArgumentParser(
-            description='MCP - Markdown Content Processor'
+            prog='htmlcmd',
+            description='HTML Convert Markdown - 将网页内容转换为Markdown格式',
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog='''
+示例:
+  %(prog)s https://example.com                    # 转换网页到Markdown
+  %(prog)s -o output.md https://example.com       # 指定输出文件
+  %(prog)s --plugins image_downloader example.com # 使用图片下载插件
+  %(prog)s --list-plugins                         # 列出所有可用插件
+  %(prog)s -v                                     # 显示版本信息
+'''
+        )
+        
+        parser.add_argument(
+            '-v', '--version',
+            action='version',
+            version=f'%(prog)s {__version__}',
+            help='显示版本信息'
         )
         
         parser.add_argument(
             'url',
+            nargs='?',
             help='要处理的网页URL'
         )
         
@@ -154,6 +174,10 @@ class CLI:
                 self.list_available_plugins()
                 return 0
                 
+            if not args.url:
+                print("错误：请提供要处理的URL")
+                return 1
+                
             if not PageFetcher.is_valid_url(args.url):
                 print(f"错误：无效的URL: {args.url}")
                 return 1
@@ -182,6 +206,12 @@ def main():
     """CLI入口点"""
     cli = CLI()
     parser = cli.create_parser()
+    
+    # 如果没有提供任何参数，显示帮助信息
+    if len(sys.argv) == 1:
+        parser.print_help()
+        return 1
+        
     args = parser.parse_args()
     
     try:
