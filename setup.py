@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="html2md",
+    name="htmlcmd",
     version="0.1.0",
     description="HTML to Markdown Converter",
     author="Divid",
@@ -19,7 +19,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "html2md=mcp.cli:main",
+            "htmlcmd=mcp.cli:main",
         ],
     },
     python_requires=">=3.8",

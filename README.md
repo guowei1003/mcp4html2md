@@ -1,4 +1,4 @@
-# MCP (Markdown Content Processor)
+# HTML Convert Markdown (HTML Convert Markdown MCP Tool)
 
 A powerful web content scraping and processing tool that converts web pages to well-formatted Markdown documents.
 
@@ -31,13 +31,13 @@ playwright install
 Basic usage:
 ```bash
 # Convert a webpage to Markdown
-mcp https://example.com
+html2md https://example.com
 
 # Specify output file
-mcp https://example.com -o output.md
+html2md https://example.com -o output.md
 
 # Use image processing plugin
-mcp https://example.com --plugins image_downloader
+html2md https://example.com --plugins image_downloader
 
 # List available plugins
 mcp --list-plugins

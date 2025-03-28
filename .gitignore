@@ -139,3 +139,4 @@ dist
 .pytest_cache/
 .images/
 __pycache__/
+*.egg-info/

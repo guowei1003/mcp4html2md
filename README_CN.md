@@ -1,4 +1,4 @@
-# MCP (Markdown 内容处理器)
+# HTML Convert Markdown (HTML 转 Markdown MCP 工具)
 
 一个强大的网页内容抓取和处理工具，可以将网页转换为格式良好的 Markdown 文档。
 
@@ -31,16 +31,16 @@ playwright install
 基本用法：
 ```bash
 # 将网页转换为 Markdown
-mcp https://example.com
+html2md https://example.com
 
 # 指定输出文件
-mcp https://example.com -o output.md
+html2md https://example.com -o output.md
 
 # 使用图片处理插件
-mcp https://example.com --plugins image_downloader
+html2md https://example.com --plugins image_downloader
 
 # 列出可用插件
-mcp --list-plugins
+html2md --list-plugins
 ```
 
 ## 配置
