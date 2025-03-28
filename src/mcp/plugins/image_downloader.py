@@ -21,8 +21,6 @@ class ImageDownloader(Plugin):
         """
         super().__init__(name, description)
         self.image_dir = os.path.join(os.getcwd(), 'images')
-        os.makedirs(self.image_dir, exist_ok=True)
-        logger.info(f"图片下载目录: {self.image_dir}")
         
     async def process_content(self, content: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -31,6 +29,8 @@ class ImageDownloader(Plugin):
         :return: 处理后的内容数据
         """
         logger.info("开始处理文档中的图片")
+        os.makedirs(self.image_dir, exist_ok=True)
+        logger.info(f"图片下载目录: {self.image_dir}")
         base_url = content.get('url', '')
         logger.debug(f"文档基础URL: {base_url}")
         

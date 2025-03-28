@@ -43,13 +43,13 @@ playwright install
 Basic usage:
 ```bash
 # Convert a webpage to Markdown
-html2md https://example.com
+htmlcmd https://example.com
 
 # Specify output file
-html2md https://example.com -o output.md
+htmlcmd https://example.com -o output.md
 
 # Use image processing plugin
-html2md https://example.com --plugins image_downloader
+htmlcmd https://example.com --plugins image_downloader
 
 # List available plugins
 mcp --list-plugins

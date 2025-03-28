@@ -43,16 +43,16 @@ playwright install
 基本用法：
 ```bash
 # 将网页转换为 Markdown
-html2md https://example.com
+htmlcmd https://example.com
 
 # 指定输出文件
-html2md https://example.com -o output.md
+htmlcmd https://example.com -o output.md
 
 # 使用图片处理插件
-html2md https://example.com --plugins image_downloader
+htmlcmd https://example.com --plugins image_downloader
 
 # 列出可用插件
-html2md --list-plugins
+htmlcmd --list-plugins
 ```
 
 ## 配置
