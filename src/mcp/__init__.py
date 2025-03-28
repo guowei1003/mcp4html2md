@@ -4,7 +4,7 @@ from .markdown_converter import MarkdownConverter
 from .config import Config
 from .plugin import Plugin, PluginManager
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 __all__ = [
     'PageFetcher',

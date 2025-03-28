@@ -12,7 +12,7 @@ from .markdown_converter import MarkdownConverter
 from .config import Config
 from .plugin import PluginManager
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 class CLI:
     def __init__(self):

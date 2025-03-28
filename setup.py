@@ -1,9 +1,15 @@
 from setuptools import setup, find_packages
 
+# 读取README.md文件内容
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
 setup(
     name="htmlcmd",
-    version="0.1.0",
+    version="1.0.1",
     description="HTML to Markdown Converter",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Divid",
     author_email="guowei1264@163.com",
     packages=find_packages("src"),
