@@ -14,6 +14,18 @@ A powerful web content scraping and processing tool that converts web pages to w
 
 ## Installation
 
+### Option 1: Install from PyPI (Recommended)
+
+```bash
+# Install from PyPI
+pip install mcp4html2md
+
+# Install Playwright browsers (required)
+playwright install
+```
+
+### Option 2: Install from Source
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/mcp4html2md.git

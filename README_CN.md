@@ -14,6 +14,18 @@
 
 ## 安装
 
+### 方式一：从 PyPI 安装（推荐）
+
+```bash
+# 从 PyPI 安装
+pip install mcp4html2md
+
+# 安装 Playwright 浏览器（必需）
+playwright install
+```
+
+### 方式二：从源码安装
+
 ```bash
 # 克隆仓库
 git clone https://github.com/guowei1003/mcp4html2md.git
