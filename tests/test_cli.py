@@ -2,7 +2,7 @@ import pytest
 import os
 import tempfile
 from unittest.mock import Mock, patch, AsyncMock
-from src.mcp.cli import CLI
+from src.convert.cli import CLI
 
 @pytest.fixture
 def cli():
@@ -21,9 +21,10 @@ def test_create_parser():
     cli = CLI()
     parser = cli.create_parser()
     
-    # 测试必需参数
-    with pytest.raises(SystemExit):
-        parser.parse_args([])
+    # URL参数虽然是位置参数，但设置了nargs='?'，所以是可选的
+    # 不再测试必需参数，因为我们现在允许无参数调用（会显示帮助信息）
+    # with pytest.raises(SystemExit):
+    #     parser.parse_args([])
         
     # 测试URL参数
     args = parser.parse_args(['https://example.com'])
@@ -47,7 +48,7 @@ async def test_process_url(cli):
     mock_content = {'title': 'Test', 'content': []}
     
     # Mock PageFetcher
-    with patch('src.mcp.cli.PageFetcher') as MockFetcher:
+    with patch('src.convert.cli.PageFetcher') as MockFetcher:
         mock_fetcher = AsyncMock()
         mock_fetcher.__aenter__.return_value = mock_fetcher
         mock_fetcher.__aexit__.return_value = None
@@ -55,7 +56,7 @@ async def test_process_url(cli):
         MockFetcher.return_value = mock_fetcher
         
         # Mock ContentParser
-        with patch('src.mcp.cli.ContentParser') as MockParser:
+        with patch('src.convert.cli.ContentParser') as MockParser:
             mock_parser = Mock()
             mock_parser.parse.return_value = mock_content
             MockParser.return_value = mock_parser
@@ -77,16 +78,9 @@ async def test_convert_to_markdown(cli):
 
 @pytest.mark.asyncio
 async def test_get_output_path(cli, temp_output_dir):
-    # 测试默认输出路径
-    with patch.object(cli.config, 'get') as mock_get:
-        mock_get.side_effect = lambda key: {
-            'output.path': temp_output_dir,
-            'output.filename_template': '{title}-{date}'
-        }[key]
-        
-        path = cli.get_output_path('https://example.com')
-        assert path.endswith('.md')
-        assert path.startswith(temp_output_dir)
+    # 测试默认输出路径（现在返回None）
+    path = cli.get_output_path('https://example.com')
+    assert path is None
     
     # 测试指定输出路径
     output_path = os.path.join(temp_output_dir, 'test.md')
@@ -117,7 +111,7 @@ async def test_run(cli, temp_output_dir):
                 mock_get_path.return_value = output_path
                 
                 # Mock PageFetcher.is_valid_url
-                with patch('src.mcp.page_fetcher.PageFetcher.is_valid_url') as mock_valid:
+                with patch('src.convert.page_fetcher.PageFetcher.is_valid_url') as mock_valid:
                     mock_valid.return_value = True
                     
                     # 测试成功情况
@@ -143,7 +137,7 @@ async def test_run_with_output_file(cli, temp_output_dir):
         mock_process.return_value = {'title': 'Test', 'content': []}
         with patch.object(cli, 'convert_to_markdown') as mock_convert:
             mock_convert.return_value = '# Test'
-            with patch('src.mcp.page_fetcher.PageFetcher.is_valid_url') as mock_valid:
+            with patch('src.convert.page_fetcher.PageFetcher.is_valid_url') as mock_valid:
                 mock_valid.return_value = True
                 
                 exit_code = await cli.run(args)
@@ -164,7 +158,7 @@ async def test_run_with_plugins(cli, temp_output_dir):
         mock_process.return_value = {'title': 'Test', 'content': []}
         with patch.object(cli, 'convert_to_markdown') as mock_convert:
             mock_convert.return_value = '# Test'
-            with patch('src.mcp.page_fetcher.PageFetcher.is_valid_url') as mock_valid:
+            with patch('src.convert.page_fetcher.PageFetcher.is_valid_url') as mock_valid:
                 mock_valid.return_value = True
                 
                 exit_code = await cli.run(args)
@@ -184,13 +178,19 @@ async def test_run_list_plugins(cli):
 
 def test_save_markdown(cli, temp_output_dir):
     markdown = '# Test\nContent'
-    output_path = os.path.join(temp_output_dir, 'test.md')
     
+    # 测试保存到文件
+    output_path = os.path.join(temp_output_dir, 'test.md')
     cli.save_markdown(markdown, output_path)
     
     assert os.path.exists(output_path)
     with open(output_path, 'r', encoding='utf-8') as f:
         assert f.read() == markdown
+        
+    # 测试输出到标准输出
+    with patch('builtins.print') as mock_print:
+        cli.save_markdown(markdown, None)
+        mock_print.assert_called_once_with(markdown)
 
 def test_list_available_plugins(cli, capsys):
     # 测试没有插件的情况
@@ -211,3 +211,40 @@ def test_list_available_plugins(cli, capsys):
         assert "Plugin 1" in captured.out
         assert "plugin2" in captured.out
         assert "Plugin 2" in captured.out 
+
+@pytest.mark.asyncio
+async def test_run_with_stdout(cli):
+    """测试使用标准输出的情况"""
+    # 创建参数对象
+    args = Mock()
+    args.url = 'https://example.com'
+    args.plugins = None
+    args.template = None
+    args.output = None  # 空输出路径表示使用标准输出
+    args.list_plugins = False
+    
+    # Mock process_url
+    with patch.object(cli, 'process_url') as mock_process:
+        mock_process.return_value = {'title': 'Test', 'content': []}
+        
+        # Mock convert_to_markdown
+        with patch.object(cli, 'convert_to_markdown') as mock_convert:
+            mock_convert.return_value = '# Test'
+            
+            # Mock get_output_path - 返回None表示输出到标准输出
+            with patch.object(cli, 'get_output_path') as mock_get_path:
+                mock_get_path.return_value = None
+                
+                # Mock save_markdown
+                with patch.object(cli, 'save_markdown') as mock_save:
+                    # Mock PageFetcher.is_valid_url
+                    with patch('src.convert.page_fetcher.PageFetcher.is_valid_url') as mock_valid:
+                        mock_valid.return_value = True
+                        
+                        # 测试成功情况
+                        exit_code = await cli.run(args)
+                        assert exit_code == 0
+                        
+                        # 验证save_markdown被正确调用，输出路径为None
+                        mock_save.assert_called_once()
+                        assert mock_save.call_args[0][1] is None  # 第二个参数应为None 

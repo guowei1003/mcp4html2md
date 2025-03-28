@@ -2,7 +2,7 @@ import pytest
 import os
 import tempfile
 import yaml
-from src.mcp.config import Config
+from src.convert.config import Config
 
 @pytest.fixture
 def temp_config_file():

@@ -1,5 +1,5 @@
 import pytest
-from src.mcp.markdown_converter import MarkdownConverter
+from src.convert.markdown_converter import MarkdownConverter
 from datetime import datetime
 
 def test_markdown_converter_initialization():

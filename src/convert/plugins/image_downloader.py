@@ -7,8 +7,8 @@ import asyncio
 from pathlib import Path
 from typing import Dict, Any, Tuple, List
 from urllib.parse import urljoin, urlparse
-from mcp.plugin import Plugin
-from mcp.logger import logger
+from convert.plugin import Plugin
+from convert.logger import logger
 
 class ImageDownloader(Plugin):
     """图片下载插件：下载文档中的图片到本地并更新链接"""

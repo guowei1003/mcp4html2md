@@ -1,5 +1,5 @@
 import pytest
-from src.mcp.plugins.image_processor import ImageProcessor
+from src.convert.plugins.image_processor import ImageProcessor
 
 def test_image_processor_initialization():
     processor = ImageProcessor('image_processor', '')

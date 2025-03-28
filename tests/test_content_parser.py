@@ -1,5 +1,5 @@
 import pytest
-from src.mcp.content_parser import ContentParser
+from src.convert.content_parser import ContentParser
 
 def test_content_parser_initialization():
     parser = ContentParser()

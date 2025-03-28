@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional
 from datetime import datetime
 
-def setup_logger(name: str = 'mcp', log_file: Optional[str] = None) -> logging.Logger:
+def setup_logger(name: str = 'convert', log_file: Optional[str] = None) -> logging.Logger:
     """
     设置日志记录器
     :param name: 日志记录器名称
@@ -35,10 +35,10 @@ def setup_logger(name: str = 'mcp', log_file: Optional[str] = None) -> logging.L
     
     # 文件处理器
     if log_file is None:
-        log_dir = os.path.join(str(Path.home()), '.mcp', 'logs')
+        log_dir = os.path.join(str(Path.home()), '.convert', 'logs')
         os.makedirs(log_dir, exist_ok=True)
         date_str = datetime.now().strftime('%Y%m%d')
-        log_file = os.path.join(log_dir, f'mcp_{date_str}.log')
+        log_file = os.path.join(log_dir, f'convert_{date_str}.log')
         
     file_handler = logging.FileHandler(log_file, encoding='utf-8')
     file_handler.setLevel(logging.DEBUG)

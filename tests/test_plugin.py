@@ -1,14 +1,14 @@
 import pytest
 import os
 import tempfile
-from src.mcp.plugin import Plugin, PluginManager
+from src.convert.plugin import Plugin, PluginManager
 
 @pytest.fixture
 def temp_plugin_dir():
     with tempfile.TemporaryDirectory() as temp_dir:
         # 创建测试插件文件
         plugin_content = '''
-from src.mcp.plugin import Plugin
+from src.convert.plugin import Plugin
 
 class TestPlugin(Plugin):
     """测试插件"""
@@ -24,14 +24,14 @@ class TestPlugin(Plugin):
 def test_plugin_manager_initialization(temp_plugin_dir):
     manager = PluginManager(temp_plugin_dir)
     assert isinstance(manager.plugins, dict)
-    assert 'testplugin' in manager.plugins
+    assert 'test_plugin' in manager.plugins
 
 @pytest.mark.asyncio
 async def test_plugin_loading(temp_plugin_dir):
     manager = PluginManager(temp_plugin_dir)
-    plugin = manager.get_plugin('testplugin')
+    plugin = manager.get_plugin('test_plugin')
     assert plugin is not None
-    assert plugin.name == 'testplugin'
+    assert plugin.name == 'test_plugin'
     assert isinstance(plugin, Plugin)
 
 def test_plugin_list(temp_plugin_dir):
@@ -39,7 +39,7 @@ def test_plugin_list(temp_plugin_dir):
     plugins = manager.list_plugins()
     assert len(plugins) == 3
     plugin_names = [p['name'] for p in plugins]
-    assert 'testplugin' in plugin_names
+    assert 'test_plugin' in plugin_names
     assert 'image_processor' in plugin_names
     assert 'image_downloader' in plugin_names
 
@@ -47,15 +47,15 @@ def test_plugin_list(temp_plugin_dir):
 async def test_plugin_processing(temp_plugin_dir):
     manager = PluginManager(temp_plugin_dir)
     content = {'test': 'data'}
-    processed = await manager.process_content(content, 'testplugin')
-    assert processed['processed_by'] == 'testplugin'
+    processed = await manager.process_content(content, 'test_plugin')
+    assert processed['processed_by'] == 'test_plugin'
     assert processed['test'] == 'data'
 
 @pytest.mark.asyncio
 async def test_plugin_chain_processing(temp_plugin_dir):
     # 创建第二个测试插件
     plugin2_content = '''
-from src.mcp.plugin import Plugin
+from src.convert.plugin import Plugin
 
 class TestPlugin2(Plugin):
     """测试插件2"""
@@ -69,9 +69,9 @@ class TestPlugin2(Plugin):
         
     manager = PluginManager(temp_plugin_dir)
     content = {'test': 'data'}
-    processed = await manager.process_content_chain(content, ['testplugin', 'testplugin2'])
-    assert processed['processed_by'] == 'testplugin'
-    assert processed['processed_by_2'] == 'testplugin2'
+    processed = await manager.process_content_chain(content, ['test_plugin', 'test_plugin2'])
+    assert processed['processed_by'] == 'test_plugin'
+    assert processed['processed_by_2'] == 'test_plugin2'
     assert processed['test'] == 'data'
 
 @pytest.mark.asyncio

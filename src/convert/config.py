@@ -14,7 +14,7 @@ class Config:
         
     def _default_config_path(self) -> str:
         """获取默认配置文件路径"""
-        return os.path.join(str(Path.home()), '.mcp', 'config.yaml')
+        return os.path.join(str(Path.home()), '.convert', 'config.yaml')
         
     def _load_config(self) -> Dict[str, Any]:
         """加载配置文件"""

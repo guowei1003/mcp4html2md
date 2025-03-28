@@ -3,7 +3,7 @@ import os
 import tempfile
 import aiohttp
 from unittest.mock import Mock, patch, AsyncMock
-from src.mcp.plugins.image_downloader import ImageDownloader
+from src.convert.plugins.image_downloader import ImageDownloader
 
 @pytest.fixture
 def image_downloader(tmp_path):

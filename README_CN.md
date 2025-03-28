@@ -57,7 +57,7 @@ htmlcmd --list-plugins
 
 ## 配置
 
-MCP 使用 YAML 格式的配置文件。默认配置文件包含在包中的 `src/mcp/default_config.yaml`。首次运行时，该配置将自动复制到 `~/.mcp/config.yaml`。
+MCP 使用 YAML 格式的配置文件。默认配置文件包含在包中的 `src/mcp/default_config.yaml`。首次运行时，该配置将自动复制到 `~/.convert/config.yaml`。
 
 ### 默认配置
 
@@ -68,7 +68,7 @@ fetcher:
   user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
 
 parser:
-  rules_path: ~/.mcp/rules
+  rules_path: ~/.convert/rules
   default_format: markdown
   default_rules:
     title: 'h1'
@@ -78,7 +78,7 @@ parser:
     tags: '.tags'
 
 converter:
-  template_path: ~/.mcp/templates
+  template_path: ~/.convert/templates
   default_template: default.md
   image_path: images
   link_style: relative
@@ -100,7 +100,7 @@ plugins:
 logging:
   console_level: INFO
   file_level: DEBUG
-  log_dir: ~/.mcp/logs
+  log_dir: ~/.convert/logs
   max_file_size: 10MB
   backup_count: 5
 ```
@@ -110,19 +110,19 @@ logging:
 您可以通过两种方式自定义配置：
 
 1. **全局配置**：
-   - 编辑 `~/.mcp/config.yaml`
+   - 编辑 `~/.convert/config.yaml`
    - 更改将应用于所有后续的转换
    ```bash
    # 用默认编辑器打开配置文件
-   nano ~/.mcp/config.yaml
+   nano ~/.convert/config.yaml
    ```
 
 2. **项目特定配置**：
-   - 在项目目录中创建 `mcp_config.yaml`
+   - 在项目目录中创建 `convert_config.yaml`
    - 这将覆盖此项目的全局配置
    ```bash
    # 将默认配置复制到当前目录
-   cp ~/.mcp/config.yaml ./mcp_config.yaml
+   cp ~/.convert/config.yaml ./convert_config.yaml
    ```
 
 ### 配置选项说明
@@ -193,7 +193,7 @@ class CustomPlugin(Plugin):
 MCP 包含一个完整的日志系统：
 - 控制台输出：INFO 级别及以上
 - 文件日志：DEBUG 级别及以上
-- 日志文件位置：`~/.mcp/logs/`
+- 日志文件位置：`~/.convert/logs/`
 
 ## 开发
 
@@ -211,67 +211,74 @@ pytest tests/test_logger.py
 结果输出：
 ```bash
 (base)  ✘ /workflow-script/mcp4html2md   main ±  pytest -v
-========================================================= test session starts ==========================================================
-platform darwin -- Python 3.11.11, pytest-8.3.5, pluggy-1.5.0 -- /miniconda3/envs/media_env/bin/python3.11
+========================================================================== test session starts ===========================================================================
+platform darwin -- Python 3.11.11, pytest-8.3.5, pluggy-1.5.0 -- /Users/cgw/miniconda3/envs/media_env/bin/python3.11
 cachedir: .pytest_cache
-rootdir: /workflow-script/mcp4html2md
+rootdir: /Users/cgw/workflow-script/mcp4html2md
 configfile: pytest.ini
-plugins: asyncio-0.26.0
+plugins: anyio-4.9.0, asyncio-0.26.0
 asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collected 50 items                                                                                                                     
+collected 51 items                                                                                                                                                       
 
-tests/test_cli.py::test_cli_initialization PASSED                                                                                [  2%]
-tests/test_cli.py::test_create_parser PASSED                                                                                     [  4%]
-tests/test_cli.py::test_process_url PASSED                                                                                       [  6%]
-tests/test_cli.py::test_convert_to_markdown PASSED                                                                               [  8%]
-tests/test_cli.py::test_get_output_path PASSED                                                                                   [ 10%]
-tests/test_cli.py::test_run PASSED                                                                                               [ 12%]
-tests/test_cli.py::test_run_with_output_file PASSED                                                                              [ 14%]
-tests/test_cli.py::test_run_with_plugins PASSED                                                                                  [ 16%]
-tests/test_cli.py::test_run_list_plugins PASSED                                                                                  [ 18%]
-tests/test_cli.py::test_save_markdown PASSED                                                                                     [ 20%]
-tests/test_cli.py::test_list_available_plugins PASSED                                                                            [ 22%]
-tests/test_config.py::test_config_initialization PASSED                                                                          [ 24%]
-tests/test_config.py::test_config_get_value PASSED                                                                               [ 26%]
-tests/test_config.py::test_config_set_value PASSED                                                                               [ 28%]
-tests/test_config.py::test_config_save_and_load PASSED                                                                           [ 30%]
-tests/test_config.py::test_default_config_creation PASSED                                                                        [ 32%]
-tests/test_content_parser.py::test_content_parser_initialization PASSED                                                          [ 34%]
-tests/test_content_parser.py::test_parse_github_content PASSED                                                                   [ 36%]
-tests/test_content_parser.py::test_parse_zhihu_content PASSED                                                                    [ 38%]
-tests/test_content_parser.py::test_xpath_to_css_conversion PASSED                                                                [ 40%]
-tests/test_image_downloader.py::test_image_downloader_initialization PASSED                                                      [ 42%]
-tests/test_image_downloader.py::test_extract_image_urls PASSED                                                                   [ 44%]
-tests/test_image_downloader.py::test_extract_markdown_image_urls PASSED                                                          [ 46%]
-tests/test_image_downloader.py::test_normalize_urls PASSED                                                                       [ 48%]
-tests/test_image_downloader.py::test_get_extension PASSED                                                                        [ 50%]
-tests/test_image_downloader.py::test_replace_image_urls PASSED                                                                   [ 52%]
-tests/test_image_downloader.py::test_replace_markdown_image_urls PASSED                                                          [ 54%]
-tests/test_image_downloader.py::test_download_images PASSED                                                                      [ 56%]
-tests/test_image_downloader.py::test_process_content PASSED                                                                      [ 58%]
-tests/test_image_processor.py::test_image_processor_initialization PASSED                                                        [ 60%]
-tests/test_image_processor.py::test_process_html_images PASSED                                                                   [ 62%]
-tests/test_image_processor.py::test_process_markdown_images PASSED                                                               [ 64%]
-tests/test_image_processor.py::test_process_mixed_content PASSED                                                                 [ 66%]
-tests/test_image_processor.py::test_handle_empty_content PASSED                                                                  [ 68%]
-tests/test_image_processor.py::test_handle_invalid_content PASSED                                                                [ 70%]
-tests/test_logger.py::test_logger_initialization PASSED                                                                          [ 72%]
-tests/test_logger.py::test_logger_with_custom_file PASSED                                                                        [ 74%]
-tests/test_logger.py::test_logger_reuse PASSED                                                                                   [ 76%]
-tests/test_logger.py::test_logger_formatting PASSED                                                                              [ 78%]
-tests/test_markdown_converter.py::test_markdown_converter_initialization PASSED                                                  [ 80%]
-tests/test_markdown_converter.py::test_convert_basic_data PASSED                                                                 [ 82%]
-tests/test_markdown_converter.py::test_convert_with_metadata PASSED                                                              [ 84%]
-tests/test_markdown_converter.py::test_format_content_blocks PASSED                                                              [ 86%]
-tests/test_markdown_converter.py::test_extract_domain PASSED                                                                     [ 88%]
-tests/test_plugin.py::test_plugin_manager_initialization PASSED                                                                  [ 90%]
-tests/test_plugin.py::test_plugin_loading PASSED                                                                                 [ 92%]
-tests/test_plugin.py::test_plugin_list PASSED                                                                                    [ 94%]
-tests/test_plugin.py::test_plugin_processing PASSED                                                                              [ 96%]
-tests/test_plugin.py::test_plugin_chain_processing PASSED                                                                        [ 98%]
-tests/test_plugin.py::test_invalid_plugin PASSED                                                                                 [100%]
+tests/test_cli.py::test_cli_initialization PASSED                                                                                                                  [  1%]
+tests/test_cli.py::test_create_parser PASSED                                                                                                                       [  3%]
+tests/test_cli.py::test_process_url PASSED                                                                                                                         [  5%]
+tests/test_cli.py::test_convert_to_markdown PASSED                                                                                                                 [  7%]
+tests/test_cli.py::test_get_output_path PASSED                                                                                                                     [  9%]
+tests/test_cli.py::test_run PASSED                                                                                                                                 [ 11%]
+tests/test_cli.py::test_run_with_output_file PASSED                                                                                                                [ 13%]
+tests/test_cli.py::test_run_with_plugins PASSED                                                                                                                    [ 15%]
+tests/test_cli.py::test_run_list_plugins PASSED                                                                                                                    [ 17%]
+tests/test_cli.py::test_save_markdown PASSED                                                                                                                       [ 19%]
+tests/test_cli.py::test_list_available_plugins PASSED                                                                                                              [ 21%]
+tests/test_cli.py::test_run_with_stdout PASSED                                                                                                                     [ 23%]
+tests/test_config.py::test_config_initialization PASSED                                                                                                            [ 25%]
+tests/test_config.py::test_config_get_value PASSED                                                                                                                 [ 27%]
+tests/test_config.py::test_config_set_value PASSED                                                                                                                 [ 29%]
+tests/test_config.py::test_config_save_and_load PASSED                                                                                                             [ 31%]
+tests/test_config.py::test_default_config_creation PASSED                                                                                                          [ 33%]
+tests/test_content_parser.py::test_content_parser_initialization PASSED                                                                                            [ 35%]
+tests/test_content_parser.py::test_parse_github_content PASSED                                                                                                     [ 37%]
+tests/test_content_parser.py::test_parse_zhihu_content PASSED                                                                                                      [ 39%]
+tests/test_content_parser.py::test_xpath_to_css_conversion PASSED                                                                                                  [ 41%]
+tests/test_image_downloader.py::test_image_downloader_initialization PASSED                                                                                        [ 43%]
+tests/test_image_downloader.py::test_extract_image_urls PASSED                                                                                                     [ 45%]
+tests/test_image_downloader.py::test_extract_markdown_image_urls PASSED                                                                                            [ 47%]
+tests/test_image_downloader.py::test_normalize_urls PASSED                                                                                                         [ 49%]
+tests/test_image_downloader.py::test_get_extension PASSED                                                                                                          [ 50%]
+tests/test_image_downloader.py::test_replace_image_urls PASSED                                                                                                     [ 52%]
+tests/test_image_downloader.py::test_replace_markdown_image_urls PASSED                                                                                            [ 54%]
+tests/test_image_downloader.py::test_download_images PASSED                                                                                                        [ 56%]
+tests/test_image_downloader.py::test_process_content PASSED                                                                                                        [ 58%]
+tests/test_image_processor.py::test_image_processor_initialization PASSED                                                                                          [ 60%]
+tests/test_image_processor.py::test_process_html_images PASSED                                                                                                     [ 62%]
+tests/test_image_processor.py::test_process_markdown_images PASSED                                                                                                 [ 64%]
+tests/test_image_processor.py::test_process_mixed_content PASSED                                                                                                   [ 66%]
+tests/test_image_processor.py::test_handle_empty_content PASSED                                                                                                    [ 68%]
+tests/test_image_processor.py::test_handle_invalid_content PASSED                                                                                                  [ 70%]
+tests/test_logger.py::test_logger_initialization PASSED                                                                                                            [ 72%]
+tests/test_logger.py::test_logger_with_custom_file PASSED                                                                                                          [ 74%]
+tests/test_logger.py::test_logger_reuse PASSED                                                                                                                     [ 76%]
+tests/test_logger.py::test_logger_formatting PASSED                                                                                                                [ 78%]
+tests/test_markdown_converter.py::test_markdown_converter_initialization PASSED                                                                                    [ 80%]
+tests/test_markdown_converter.py::test_convert_basic_data PASSED                                                                                                   [ 82%]
+tests/test_markdown_converter.py::test_convert_with_metadata PASSED                                                                                                [ 84%]
+tests/test_markdown_converter.py::test_format_content_blocks PASSED                                                                                                [ 86%]
+tests/test_markdown_converter.py::test_extract_domain PASSED                                                                                                       [ 88%]
+tests/test_plugin.py::test_plugin_manager_initialization PASSED                                                                                                    [ 90%]
+tests/test_plugin.py::test_plugin_loading PASSED                                                                                                                   [ 92%]
+tests/test_plugin.py::test_plugin_list PASSED                                                                                                                      [ 94%]
+tests/test_plugin.py::test_plugin_processing PASSED                                                                                                                [ 96%]
+tests/test_plugin.py::test_plugin_chain_processing PASSED                                                                                                          [ 98%]
+tests/test_plugin.py::test_invalid_plugin PASSED                                                                                                                   [100%]
 
-==================================================== 50 passed, 1 warning in 0.58s =====================================================
+============================================================================ warnings summary ============================================================================
+tests/test_plugins/test_plugin.py:3
+  /Users/cgw/workflow-script/mcp4html2md/tests/test_plugins/test_plugin.py:3: PytestCollectionWarning: cannot collect test class 'TestPlugin' because it has a __init__ constructor (from: tests/test_plugins/test_plugin.py)
+    class TestPlugin(Plugin):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+===================================================================== 51 passed, 1 warning in 0.57s ======================================================================
 ```
 
 ## 贡献

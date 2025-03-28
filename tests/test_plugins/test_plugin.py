@@ -1,4 +1,4 @@
-from src.mcp.plugin import Plugin
+from src.convert.plugin import Plugin
 
 class TestPlugin(Plugin):
     """测试插件"""

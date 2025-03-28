@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="htmlcmd",
-    version="1.1.0",
+    version="1.2.0",
     description="HTML to Markdown Converter",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -25,7 +25,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "htmlcmd=mcp.cli:main",
+            "htmlcmd=convert.cli:main",
         ],
     },
     python_requires=">=3.8",

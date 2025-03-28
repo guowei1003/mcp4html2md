@@ -34,6 +34,7 @@ class PluginManager:
         from .plugins.image_processor import ImageProcessor
         from .plugins.image_downloader import ImageDownloader
         
+        # 使用规范化的下划线格式名称
         self.register_plugin(ImageProcessor('image_processor', '处理图片链接'))
         self.register_plugin(ImageDownloader('image_downloader', '下载图片到本地'))
         
@@ -41,7 +42,7 @@ class PluginManager:
         
     def _default_plugin_dir(self) -> str:
         """获取默认插件目录路径"""
-        return os.path.join(str(Path.home()), '.mcp', 'plugins')
+        return os.path.join(str(Path.home()), '.convert', 'plugins')
         
     def _load_plugins(self):
         """加载插件目录中的所有插件"""
@@ -69,11 +70,26 @@ class PluginManager:
             for item in dir(module):
                 obj = getattr(module, item)
                 if isinstance(obj, type) and issubclass(obj, Plugin) and obj != Plugin:
-                    plugin = obj(item.lower(), '')
-                    self.register_plugin(plugin)
+                    # 规范化插件名称为下划线格式
+                    plugin_name = self._normalize_plugin_name(item)
+                    # 仅当未注册过相同名称的插件时才注册
+                    if plugin_name not in self.plugins:
+                        plugin = obj(plugin_name, getattr(obj, '__doc__', '') or '')
+                        self.register_plugin(plugin)
                     
         except Exception as e:
             print(f"加载插件 {filepath} 失败: {e}")
+    
+    def _normalize_plugin_name(self, name: str) -> str:
+        """
+        规范化插件名称为下划线格式
+        :param name: 原始插件名称
+        :return: 规范化的插件名称
+        """
+        # 将驼峰式命名转换为下划线格式
+        import re
+        name = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', name)
+        return name.lower()
             
     def get_plugin(self, name: str) -> Optional[Plugin]:
         """
@@ -81,7 +97,9 @@ class PluginManager:
         :param name: 插件名称
         :return: 插件实例
         """
-        return self.plugins.get(name)
+        # 尝试规范化插件名称来查找
+        normalized_name = self._normalize_plugin_name(name)
+        return self.plugins.get(normalized_name) or self.plugins.get(name)
         
     def list_plugins(self) -> List[Dict[str, str]]:
         """

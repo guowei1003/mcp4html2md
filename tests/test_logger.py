@@ -2,7 +2,7 @@ import pytest
 import logging
 import os
 import tempfile
-from src.mcp.logger import setup_logger
+from src.convert.logger import setup_logger
 
 def test_logger_initialization():
     logger = setup_logger('test_logger')

@@ -1,4 +1,4 @@
-# MCP Default Configuration
+# Convert Default Configuration
 
 fetcher:
   headless: true
@@ -6,7 +6,7 @@ fetcher:
   user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
 
 parser:
-  rules_path: ~/.mcp/rules
+  rules_path: ~/.convert/rules
   default_format: markdown
   default_rules:
     title: 'h1'
@@ -16,13 +16,13 @@ parser:
     tags: '.tags'
 
 converter:
-  template_path: ~/.mcp/templates
+  template_path: ~/.convert/templates
   default_template: default.md
   image_path: images
   link_style: relative
 
 output:
-  path: ~/Documents/mcp-output
+  path: ~/Documents/convert-output
   filename_template: '{title}-{date}'
   create_date_dirs: true
   file_exists_action: increment  # increment, overwrite, or skip
@@ -38,6 +38,6 @@ plugins:
 logging:
   console_level: INFO
   file_level: DEBUG
-  log_dir: ~/.mcp/logs
+  log_dir: ~/.convert/logs
   max_file_size: 10MB
   backup_count: 5 

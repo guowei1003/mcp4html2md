@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from mcp.plugin import Plugin
+from convert.plugin import Plugin
 import re
 from urllib.parse import urljoin
 

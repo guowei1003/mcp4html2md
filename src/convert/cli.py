@@ -12,7 +12,7 @@ from .markdown_converter import MarkdownConverter
 from .config import Config
 from .plugin import PluginManager
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 
 class CLI:
     def __init__(self):
@@ -28,7 +28,7 @@ class CLI:
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog='''
 示例:
-  %(prog)s https://example.com                    # 转换网页到Markdown
+  %(prog)s https://example.com                    # 转换网页到Markdown并输出到标准输出
   %(prog)s -o output.md https://example.com       # 指定输出文件
   %(prog)s --plugins image_downloader example.com # 使用图片下载插件
   %(prog)s --list-plugins                         # 列出所有可用插件
@@ -51,7 +51,7 @@ class CLI:
         
         parser.add_argument(
             '-o', '--output',
-            help='输出文件路径，默认为配置中指定的目录'
+            help='输出文件路径，默认输出到标准输出'
         )
         
         parser.add_argument(
@@ -79,34 +79,18 @@ class CLI:
         
         return parser
         
-    def get_output_path(self, url: str, output: Optional[str] = None) -> str:
+    def get_output_path(self, url: str, output: Optional[str] = None) -> Optional[str]:
         """
         获取输出文件路径
         :param url: 网页URL
         :param output: 指定的输出路径
-        :return: 完整的输出文件路径
+        :return: 完整的输出文件路径，如果为None则表示输出到标准输出
         """
         if output:
             return os.path.abspath(output)
             
-        # 使用配置中的输出目录和文件名模板
-        output_dir = self.config.get('output.path')
-        filename_template = self.config.get('output.filename_template')
-        
-        # 确保输出目录存在
-        os.makedirs(output_dir, exist_ok=True)
-        
-        # 生成文件名
-        date_str = datetime.now().strftime('%Y%m%d-%H%M%S')
-        filename = filename_template.format(
-            title=url.split('/')[-1] or 'index',
-            date=date_str
-        )
-        
-        if not filename.endswith('.md'):
-            filename += '.md'
-            
-        return os.path.join(output_dir, filename)
+        # 如果没有指定输出，返回None表示输出到标准输出
+        return None
         
     async def process_url(self, url: str, plugins: Optional[List[str]] = None) -> dict:
         """
@@ -141,12 +125,18 @@ class CLI:
         converter = MarkdownConverter(template)
         return converter.convert(content)
         
-    def save_markdown(self, markdown: str, output_path: str) -> None:
+    def save_markdown(self, markdown: str, output_path: Optional[str] = None) -> None:
         """
-        保存Markdown到文件
+        保存Markdown到文件或输出到标准输出
         :param markdown: Markdown文本
-        :param output_path: 输出文件路径
+        :param output_path: 输出文件路径，如果为None则输出到标准输出
         """
+        if output_path is None:
+            # 输出到标准输出
+            print(markdown)
+            return
+            
+        # 保存到文件
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(markdown)
@@ -189,13 +179,15 @@ class CLI:
             converter = MarkdownConverter(args.template)
             markdown = converter.convert(content)
             
-            # 保存到文件
+            # 获取输出路径（可能为None，表示输出到标准输出）
             output_path = self.get_output_path(args.url, args.output)
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            with open(output_path, 'w', encoding='utf-8') as f:
-                f.write(markdown)
-                
-            print(f"\n成功！Markdown文件已保存到：{output_path}")
+            
+            # 保存到文件或输出到标准输出
+            self.save_markdown(markdown, output_path)
+            
+            if output_path:
+                print(f"\n成功！Markdown文件已保存到：{output_path}")
+            
             return 0
             
         except Exception as e:
