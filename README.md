@@ -196,71 +196,94 @@ pytest
 pytest tests/test_logger.py
 ```
 
-Output:
-```bash
-(base)  ✘ /workflow-script/mcp4html2md   main ±  pytest -v
-========================================================= test session starts ==========================================================
-platform darwin -- Python 3.11.11, pytest-8.3.5, pluggy-1.5.0 -- /miniconda3/envs/media_env/bin/python3.11
-cachedir: .pytest_cache
-rootdir: /workflow-script/mcp4html2md
-configfile: pytest.ini
-plugins: asyncio-0.26.0
-asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collected 50 items                                                                                                                     
+## Cursor 集成
 
-tests/test_cli.py::test_cli_initialization PASSED                                                                                [  2%]
-tests/test_cli.py::test_create_parser PASSED                                                                                     [  4%]
-tests/test_cli.py::test_process_url PASSED                                                                                       [  6%]
-tests/test_cli.py::test_convert_to_markdown PASSED                                                                               [  8%]
-tests/test_cli.py::test_get_output_path PASSED                                                                                   [ 10%]
-tests/test_cli.py::test_run PASSED                                                                                               [ 12%]
-tests/test_cli.py::test_run_with_output_file PASSED                                                                              [ 14%]
-tests/test_cli.py::test_run_with_plugins PASSED                                                                                  [ 16%]
-tests/test_cli.py::test_run_list_plugins PASSED                                                                                  [ 18%]
-tests/test_cli.py::test_save_markdown PASSED                                                                                     [ 20%]
-tests/test_cli.py::test_list_available_plugins PASSED                                                                            [ 22%]
-tests/test_config.py::test_config_initialization PASSED                                                                          [ 24%]
-tests/test_config.py::test_config_get_value PASSED                                                                               [ 26%]
-tests/test_config.py::test_config_set_value PASSED                                                                               [ 28%]
-tests/test_config.py::test_config_save_and_load PASSED                                                                           [ 30%]
-tests/test_config.py::test_default_config_creation PASSED                                                                        [ 32%]
-tests/test_content_parser.py::test_content_parser_initialization PASSED                                                          [ 34%]
-tests/test_content_parser.py::test_parse_github_content PASSED                                                                   [ 36%]
-tests/test_content_parser.py::test_parse_zhihu_content PASSED                                                                    [ 38%]
-tests/test_content_parser.py::test_xpath_to_css_conversion PASSED                                                                [ 40%]
-tests/test_image_downloader.py::test_image_downloader_initialization PASSED                                                      [ 42%]
-tests/test_image_downloader.py::test_extract_image_urls PASSED                                                                   [ 44%]
-tests/test_image_downloader.py::test_extract_markdown_image_urls PASSED                                                          [ 46%]
-tests/test_image_downloader.py::test_normalize_urls PASSED                                                                       [ 48%]
-tests/test_image_downloader.py::test_get_extension PASSED                                                                        [ 50%]
-tests/test_image_downloader.py::test_replace_image_urls PASSED                                                                   [ 52%]
-tests/test_image_downloader.py::test_replace_markdown_image_urls PASSED                                                          [ 54%]
-tests/test_image_downloader.py::test_download_images PASSED                                                                      [ 56%]
-tests/test_image_downloader.py::test_process_content PASSED                                                                      [ 58%]
-tests/test_image_processor.py::test_image_processor_initialization PASSED                                                        [ 60%]
-tests/test_image_processor.py::test_process_html_images PASSED                                                                   [ 62%]
-tests/test_image_processor.py::test_process_markdown_images PASSED                                                               [ 64%]
-tests/test_image_processor.py::test_process_mixed_content PASSED                                                                 [ 66%]
-tests/test_image_processor.py::test_handle_empty_content PASSED                                                                  [ 68%]
-tests/test_image_processor.py::test_handle_invalid_content PASSED                                                                [ 70%]
-tests/test_logger.py::test_logger_initialization PASSED                                                                          [ 72%]
-tests/test_logger.py::test_logger_with_custom_file PASSED                                                                        [ 74%]
-tests/test_logger.py::test_logger_reuse PASSED                                                                                   [ 76%]
-tests/test_logger.py::test_logger_formatting PASSED                                                                              [ 78%]
-tests/test_markdown_converter.py::test_markdown_converter_initialization PASSED                                                  [ 80%]
-tests/test_markdown_converter.py::test_convert_basic_data PASSED                                                                 [ 82%]
-tests/test_markdown_converter.py::test_convert_with_metadata PASSED                                                              [ 84%]
-tests/test_markdown_converter.py::test_format_content_blocks PASSED                                                              [ 86%]
-tests/test_markdown_converter.py::test_extract_domain PASSED                                                                     [ 88%]
-tests/test_plugin.py::test_plugin_manager_initialization PASSED                                                                  [ 90%]
-tests/test_plugin.py::test_plugin_loading PASSED                                                                                 [ 92%]
-tests/test_plugin.py::test_plugin_list PASSED                                                                                    [ 94%]
-tests/test_plugin.py::test_plugin_processing PASSED                                                                              [ 96%]
-tests/test_plugin.py::test_plugin_chain_processing PASSED                                                                        [ 98%]
-tests/test_plugin.py::test_invalid_plugin PASSED                                                                                 [100%]
+MCP 可以轻松集成到 Cursor IDE 中，提供便捷的网页内容转换功能。以下是集成步骤：
 
-==================================================== 50 passed, 1 warning in 0.58s =====================================================
-```
+### 1. 安装 MCP 扩展
+
+1. 打开 Cursor 的命令面板（按 `Cmd+Shift+P` 或 `Ctrl+Shift+P`）
+2. 输入 `Extensions: Install Extension`
+3. 搜索 `MCP HTML to Markdown`
+4. 点击安装
+
+### 2. 配置快捷键（可选）
+
+1. 打开 Cursor 设置（按 `Cmd+,` 或 `Ctrl+,`）
+2. 点击 `Keyboard Shortcuts`
+3. 搜索 `mcp`
+4. 为以下命令设置快捷键：
+   - `MCP: Convert URL to Markdown`
+   - `MCP: Convert Selection to Markdown`
+   - `MCP: Convert Clipboard to Markdown`
+
+### 3. 使用方法
+
+#### 方法一：命令面板
+
+1. 选中网页 URL 或 HTML 内容
+2. 打开命令面板
+3. 输入 `MCP: Convert` 选择相应的转换命令
+
+#### 方法二：右键菜单
+
+1. 选中网页 URL 或 HTML 内容
+2. 右键点击，选择 `MCP Convert to Markdown`
+
+#### 方法三：快捷键
+
+- 使用之前配置的快捷键直接触发转换
+
+### 4. 自定义配置
+
+1. 打开命令面板
+2. 输入 `MCP: Open Settings`
+3. 修改配置选项：
+   ```json
+   {
+     "mcp.output.path": "~/Documents/mcp-output",
+     "mcp.plugins.enabled": ["image_downloader"],
+     "mcp.converter.template": "default.md",
+     "mcp.fetcher.timeout": 30
+   }
+   ```
+
+### 5. 常见用例
+
+1. **转换网页文章**
+   ```
+   1. 复制文章 URL
+   2. 在 Cursor 中使用 Cmd+V 或 Ctrl+V 粘贴
+   3. 选中 URL
+   4. 使用命令面板或快捷键转换
+   ```
+
+2. **转换选中的 HTML**
+   ```
+   1. 选中 HTML 内容
+   2. 右键选择 "MCP Convert to Markdown"
+   3. 转换后的 Markdown 将替换选中内容
+   ```
+
+3. **使用图片下载插件**
+   ```
+   1. 在设置中启用 image_downloader 插件
+   2. 转换时会自动下载图片并更新引用
+   ```
+
+### 6. 故障排除
+
+如果遇到问题，请检查：
+
+1. MCP 扩展是否正确安装
+2. 配置文件是否正确（`~/.mcp/config.yaml`）
+3. 查看输出面板中的错误信息
+4. 确保有正确的网络连接
+
+如需更多帮助，请访问：
+- [MCP GitHub Issues](https://github.com/yourusername/mcp4html2md/issues)
+- [Cursor 扩展文档](https://cursor.sh/docs/extensions)
+
 ## Contributing
 
 1. Fork the repository
